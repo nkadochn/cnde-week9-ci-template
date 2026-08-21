@@ -1,0 +1,32 @@
+name: ci
+
+# Two triggers, and they overlap on purpose so you see it.
+# A push to a branch that already has an open pull request fires both, so the
+# Checks tab shows the same job twice. Nothing is wrong; delete the push
+# trigger and a commit pushed before you open the PR runs nothing at all.
+on: [push, pull_request]
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          # Caches the pip download directory, keyed on requirements.txt.
+          # First run installs from the network; later runs restore in seconds
+          # until you edit that file.
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint
+        run: ruff check src tests
+
+      - name: Test
+        run: pytest -q

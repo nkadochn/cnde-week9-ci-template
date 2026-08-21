@@ -1,0 +1,19 @@
+# The lint gate, stated rather than inherited.
+#
+# Ruff ships a default rule set and that default has grown: version 0.16 turns on
+# roughly forty rule families, including security and timezone checks that fire on
+# code which is correct here. A gate nobody chose is a gate nobody can defend when
+# it goes red, so the rules are listed.
+#
+# E4  imports          E7  statements, including `== None` and ambiguous names
+# E9  runtime errors   F   pyflakes: undefined names, unused imports and variables
+# I   import order     UP  syntax that a newer Python made obsolete
+# B   bugbear: mutable default arguments and their relatives
+#
+# Line length is not enforced. It generates the most noise and catches the least.
+# Add "E5" here if your project wants it, and expect to reformat.
+
+line-length = 100
+
+[lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B"]

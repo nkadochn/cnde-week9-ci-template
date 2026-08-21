@@ -1,0 +1,26 @@
+# Secrets. Never commit one, and note that deleting it in a later commit does
+# not undo anything: the value stays in the history, and the final project's
+# forfeiture rule counts history.
+.env
+*.pem
+service-account*.json
+
+# Bulk data stays out. Trip files are gigabytes and they already live in the
+# bucket; a repository holds code and the small fixtures under data/ that the
+# tests need. The two negations keep data/ committable anyway.
+*.parquet
+!data/
+!data/**
+
+# Notebook checkpoints and tool caches
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Environments and editors
+.venv/
+venv/
+.vscode/
+.DS_Store
