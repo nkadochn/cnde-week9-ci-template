@@ -1,5 +1,6 @@
 """Transformation and quality functions for the pipeline.
 
-Notebooks import from here. Nothing in this package touches the network or a
-warehouse, which is what lets the test suite run on a CI runner in seconds.
+You import from here in your notebooks. We keep everything in this package clear
+of the network and the warehouse, and that is what lets a CI runner check the
+whole suite in seconds without holding a credential for anything.
 """
