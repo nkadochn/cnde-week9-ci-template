@@ -17,10 +17,11 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-          # This caches the pip download directory, keyed on requirements.txt.
-          # The first run installs from the network, and later runs restore in
-          # seconds until you edit that file.
-          cache: pip
+          # No `cache: pip` here, and that is deliberate. We measured it on this
+          # repository twice: 10 s to install with an empty cache and 11 s with a
+          # populated one. Three prebuilt wheels are dominated by installing, not
+          # downloading, so there was nothing for a cache to save. Add it back the
+          # day requirements.txt grows a package that compiles from source.
 
       - name: Install dependencies
         run: pip install -r requirements.txt
