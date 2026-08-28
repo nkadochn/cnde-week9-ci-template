@@ -2,15 +2,15 @@
 
 ### ADSP 31011 Cloud-Native Data Engineering · Nick Kadochnikov
 
-A working repository with a working pipeline. Push to it and a GitHub Actions runner
-checks out your code, installs the pinned dependencies, lints, and runs the tests. Open
-a pull request and the same check reports on the pull request before anyone reads the
-diff.
+A working repository with a working pipeline in it. Push to it and a GitHub Actions
+runner checks out your code, installs the pinned dependencies, lints, and runs the
+tests. Open a pull request and you get the same check reporting on the pull request
+before anyone reads the diff.
 
-Two things use this template. In Week 9 you create a repository from it and spend the
-session breaking and extending the pipeline. Your final-project repository is the same
-template with your own pipeline grown inside it, so the layout below is the layout the
-final project is graded against.
+We use this template twice. In Week 9 you create a repository from it and spend the
+session breaking and extending the pipeline. Then your final-project repository is this
+same template with your own pipeline grown inside it, so the layout below is the layout
+the final project is graded against.
 
 ## What is in here
 
@@ -27,20 +27,20 @@ ruff.toml                  the lint rules, chosen rather than inherited
 
 ## The three functions, and why these three
 
-`src/transform.py` holds `clean_country_code`, `extended_price` and `fiscal_quarter`.
-They are small deliberately, and each one is a defect you have already met in this
+`src/transform.py` has `clean_country_code`, `extended_price` and `fiscal_quarter` in
+it. They are small deliberately, and each one is a defect you have already met in this
 course:
 
 - **`clean_country_code`** strips whitespace and folds case. Skip it and a group-by
   reports `us`, `US ` and `US` as three countries. Nothing errors.
-- **`extended_price`** applies a discount once. Apply it twice and revenue is
-  understated by a plausible-looking amount that survives a spot check.
+- **`extended_price`** applies a discount once. Apply it twice and you will understate
+  revenue by a plausible-looking amount that survives a spot check.
 - **`fiscal_quarter`** turns a date into `FY25-Q3`. Derive it in three notebooks
   instead of once and two reports will disagree about which quarter a sale fell in.
 
 All three are pure: arguments in, value out, no network, no warehouse, no file reads.
-That is the property that lets a runner check them in seconds. Your notebooks do the
-reading and writing and call these.
+That is the property that lets a runner check them in seconds. You do the reading and
+the writing in your notebooks, and they call these.
 
 ## Run it the way CI runs it
 
@@ -56,16 +56,15 @@ dependency.
 
 ## The fixture is the data, and that is the rule
 
-`data/fixture_orders.csv` has twenty rows, written by hand. It carries the mess on
-purpose: whitespace around country codes, mixed case, a zero-quantity line, and dates
-that cross both a calendar year and a fiscal year.
+`data/fixture_orders.csv` has twenty rows in it, written by hand. We did put the mess
+in on purpose: whitespace around country codes, mixed case, a zero-quantity line, and
+dates that cross both a calendar year and a fiscal year.
 
 **CI never reads from the network.** No bucket, no warehouse, no credentials. A test
 suite that downloads its input fails when someone else's service has a bad morning, and
-a pipeline that only goes red for real reasons is the only kind anyone keeps looking at.
-For the final project you author your own small fixtures the same way, one per source,
-with the anomalies you want caught planted in them. Real trip data never enters the
-repository.
+once that happens a few times nobody looks at the pipeline any more. For the final
+project you write your own small fixtures the same way, one per source, and you plant
+the anomalies you want caught in them. Real trip data never enters the repository.
 
 ## How the final project extends this
 
@@ -79,9 +78,9 @@ Keep the layout and grow into it.
 | `notebooks/` | the Bronze, Silver and Gold notebooks, importing from `src/` |
 | `ci.yml` | the same job, unchanged, running against more code |
 
-Three things make the difference between a repository that has CI and one where CI is
-doing work: the layout above, tests that exercise your own quality rules rather than
-asserting `True`, and a green run on the commit you hand over.
+Three things separate a repository that has CI from one where CI is doing work: the
+layout above, tests that exercise your own quality rules rather than asserting `True`,
+and a green run on the commit you do hand over.
 
 `repo_evidence.md` in this repository is where the run links go. Fill it in as you work
 rather than at the end. What counts for the course, and what the CI component is worth,

@@ -1,17 +1,18 @@
-# The lint gate, stated rather than inherited.
+# The lint gate, and we state it here rather than inheriting it.
 #
 # Ruff ships a default rule set and that default has grown: version 0.16 turns on
 # roughly forty rule families, including security and timezone checks that fire on
-# code which is correct here. A gate nobody chose is a gate nobody can defend when
-# it goes red, so the rules are listed.
+# code which is correct here. If nobody chose the gate, nobody can defend it the
+# day it goes red, so we list the rules we want.
 #
 # E4  imports          E7  statements, including `== None` and ambiguous names
 # E9  runtime errors   F   pyflakes: undefined names, unused imports and variables
 # I   import order     UP  syntax that a newer Python made obsolete
 # B   bugbear: mutable default arguments and their relatives
 #
-# Line length is not enforced. It generates the most noise and catches the least.
-# Add "E5" here if your project wants it, and expect to reformat.
+# We do not enforce line length. Of all the families we looked at, it produces
+# the most complaints for the least benefit. Add "E5" here if your project wants
+# it, and expect to reformat.
 
 line-length = 100
 

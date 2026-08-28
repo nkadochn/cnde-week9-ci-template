@@ -1,8 +1,8 @@
 """Tests for src.transform.
 
-Test names read ``test_<behavior>_when_<condition>``, so a failure in the CI log
-states what broke without anyone opening the file. That is the whole return on
-the naming convention: the log line is the bug report.
+We name every test ``test_<behavior>_when_<condition>``, so when one fails the
+CI log states what broke and nobody has to open this file to find out. That is
+what we get for the extra typing: the log line becomes the bug report.
 """
 
 import datetime as dt
@@ -28,8 +28,8 @@ class TestCleanCountryCode:
         assert clean_country_code(raw) == expected
 
     def test_collapses_to_one_key_when_the_same_country_arrives_three_ways(self):
-        # The failure this guards against is a group-by splitting one country
-        # into three rows, which no downstream error message ever mentions.
+        # We are guarding against a group-by that splits one country into
+        # three rows. No downstream error message ever mentions it.
         assert len({clean_country_code(v) for v in ("us", "US ", " US")}) == 1
 
     @pytest.mark.parametrize("raw", ["", "   ", "\t\n"])
@@ -71,7 +71,7 @@ class TestExtendedPrice:
         assert extended_price(4, 25.00) == pytest.approx(100.00)
 
     def test_rounds_to_two_decimals_when_the_product_has_more(self):
-        # 7 * 89.95 * 0.95 = 598.16749999... and money carries two decimals.
+        # 7 * 89.95 * 0.95 = 598.16749999... and money has two decimals.
         assert extended_price(7, 89.95, 0.05) == 598.17
 
     @pytest.mark.parametrize("rate", [-0.01, 1.01, 2.0])
@@ -104,12 +104,12 @@ class TestFiscalQuarter:
         assert fiscal_quarter(day) == expected
 
     def test_rolls_the_year_when_september_becomes_october(self):
-        # The two dates are one day apart and belong to different fiscal years.
+        # These two dates are one day apart and sit in different fiscal years.
         assert fiscal_quarter(dt.date(2025, 9, 30)) == "FY25-Q4"
         assert fiscal_quarter(dt.date(2025, 10, 1)) == "FY26-Q1"
 
     def test_keeps_the_year_when_december_becomes_january(self):
-        # The calendar year rolls here and the fiscal year does not.
+        # Here the calendar year rolls over and the fiscal year does not.
         assert fiscal_quarter(dt.date(2024, 12, 31)) == "FY25-Q1"
         assert fiscal_quarter(dt.date(2025, 1, 1)) == "FY25-Q2"
 
@@ -125,9 +125,9 @@ class TestFiscalQuarter:
 class TestAgainstTheFixture:
     """The same three functions, driven by data/fixture_orders.csv.
 
-    Unit cases above prove each function in isolation. These prove the fixture
-    is the shape the pipeline assumes, which is the check that catches a source
-    file changing under you.
+    The unit cases above prove each function in isolation. These prove the
+    fixture is still the shape the pipeline assumes, which is how we find out
+    that a source file changed under us.
     """
 
     def test_every_country_code_cleans_when_the_fixture_is_read(self, orders):
@@ -136,8 +136,8 @@ class TestAgainstTheFixture:
         assert all(len(c) == 2 and c.isupper() for c in cleaned)
 
     def test_the_fixture_is_dirty_when_read_without_cleaning(self, orders):
-        # If this fails, someone tidied the fixture and the cleaning tests above
-        # are no longer exercising anything.
+        # If this fails, somebody tidied the fixture, and the cleaning tests
+        # above are no longer exercising anything.
         raw = list(orders["country_code"])
         assert any(c != c.strip() for c in raw), "no whitespace left to strip"
         assert any(c != c.upper() for c in raw), "no lower case left to fold"
@@ -158,8 +158,9 @@ class TestAgainstTheFixture:
             for r in orders.itertuples()
         )
         assert net < gross
-        # A double-applied discount would still satisfy net < gross, which is why
-        # the parametrized cases above carry the exact expected amounts.
+        # A double-applied discount still satisfies net < gross, so this test
+        # cannot catch one. The parametrized cases above have the exact
+        # expected amounts in them for that reason.
 
     def test_two_fiscal_years_are_covered_when_dates_are_bucketed(self, orders):
         quarters = {fiscal_quarter(d.date()) for d in orders["order_date"]}
@@ -167,7 +168,7 @@ class TestAgainstTheFixture:
         assert any(q.startswith("FY26") for q in quarters)
 
     def test_one_line_has_no_quantity_when_the_fixture_is_read(self, orders):
-        # The zero-quantity line is deliberate: a pipeline that divides by
-        # quantity anywhere needs a row that makes it fail here rather than in
-        # production.
+        # We put the zero-quantity line in on purpose. If your pipeline
+        # divides by quantity anywhere, we want a row that makes it fail here
+        # rather than in production.
         assert (orders["quantity"] == 0).sum() == 1

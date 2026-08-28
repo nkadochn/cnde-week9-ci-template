@@ -1,9 +1,9 @@
 name: ci
 
-# Two triggers, and they overlap on purpose so you see it.
+# Two triggers, and we overlap them on purpose so that you see it happen.
 # A push to a branch that already has an open pull request fires both, so the
-# Checks tab shows the same job twice. Nothing is wrong; delete the push
-# trigger and a commit pushed before you open the PR runs nothing at all.
+# Checks tab shows the same job twice. Nothing is wrong. Delete the push
+# trigger and a commit you push before opening the PR runs nothing at all.
 on: [push, pull_request]
 
 jobs:
@@ -17,9 +17,9 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-          # Caches the pip download directory, keyed on requirements.txt.
-          # First run installs from the network; later runs restore in seconds
-          # until you edit that file.
+          # This caches the pip download directory, keyed on requirements.txt.
+          # The first run installs from the network, and later runs restore in
+          # seconds until you edit that file.
           cache: pip
 
       - name: Install dependencies

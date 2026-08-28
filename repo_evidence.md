@@ -1,10 +1,10 @@
 # Repository evidence
 
 Fill this in as you go. It is a deliverable of the final project, and it is faster to
-paste a link when you are looking at it than to reconstruct one later.
+paste a link while you are looking at it than to reconstruct one later.
 
-A red run is worth as much here as a green one. A pipeline that has never failed has
-never been shown to work.
+A red run is worth as much here as a green one. If a pipeline has never failed, nobody
+has shown that it works.
 
 ## Runs
 
@@ -23,4 +23,4 @@ never been shown to work.
 ## Notes
 
 Anything a reader needs in order to believe the table above: a run that is red for a
-known reason, a test that is skipped and why, a dependency you had to unpin.
+reason you know about, a test you have skipped and why, a dependency you had to unpin.

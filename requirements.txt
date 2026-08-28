@@ -1,6 +1,6 @@
-# Pinned exactly, because a CI run that installs a different version than it did
-# yesterday cannot tell you whether your code broke or your dependency did.
-# pandas 3 requires Python 3.11 or newer, which is what pins the runner version
+# We pin exactly. If a CI run installs a different version than it did
+# yesterday, it cannot tell you whether your code broke or your dependency did.
+# pandas 3 needs Python 3.11 or newer, and that is what pins the runner version
 # in .github/workflows/ci.yml.
 pandas==3.0.5
 pytest==9.1.1
