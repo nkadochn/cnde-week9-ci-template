@@ -1,16 +1,20 @@
-# Secrets. Never commit one. If you do, deleting it in a later commit undoes
-# nothing, because the value stays in the history, and the final project's
-# forfeiture rule counts the history.
+# Bulk data stays out. Trip files are gigabytes and they already live in the
+# bucket, and a zip of the repository belongs beside it, never inside it. We
+# keep code in here, plus the small fixtures under data/ that the tests need:
+# Parquet and zip files are excluded everywhere, and the one negation below
+# lets Parquet fixtures whose names start with fixture_ back in.
+*.parquet
+*.zip
+!data/fixture_*
+
+# Secrets. Never commit one. Deleting it in a later commit does not remove it
+# from the history, and a leaked token stays usable until you rotate it, so
+# rotate it first. These patterns come after the negation above, so they win
+# everywhere, data/ included.
 .env
 *.pem
+*key*.json
 service-account*.json
-
-# Bulk data stays out. Trip files are gigabytes and they already live in the
-# bucket. We keep code in here, plus the small fixtures under data/ that the
-# tests need, and the two negations below are what keep data/ committable.
-*.parquet
-!data/
-!data/**
 
 # Notebook checkpoints and tool caches
 .ipynb_checkpoints/

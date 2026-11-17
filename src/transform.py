@@ -18,6 +18,8 @@ from __future__ import annotations
 
 from datetime import date
 
+import pandas as pd
+
 # The fiscal year runs 1 October to 30 September, so October starts a new year.
 # We chose this to match the dim_date logic from the warehousing week. If your
 # project uses a calendar fiscal year, change it here and the tests will tell
@@ -98,3 +100,47 @@ def fiscal_quarter(d: date) -> str:
     fiscal_year = d.year + 1 if d.month >= FISCAL_YEAR_START_MONTH else d.year
 
     return f"FY{fiscal_year % 100:02d}-Q{quarter}"
+
+
+def revenue_by_country_quarter(orders: pd.DataFrame) -> pd.DataFrame:
+    """Return net revenue by cleaned country code and fiscal quarter.
+
+    This is the shape of a Gold table: one row per country and fiscal quarter,
+    with the revenue a report reads off it. We build it from the three functions
+    above and nothing else, so a defect in any one of them changes a number in
+    this table, and a test that pins those numbers catches it.
+
+    ``orders`` needs the columns ``order_date``, ``country_code``, ``quantity``,
+    ``unit_price`` and ``discount_rate``. We read it and never change it: the
+    function returns a new frame with the columns ``country_code``,
+    ``fiscal_quarter`` and ``net_revenue``, sorted by country and then quarter.
+    A zero-quantity line stays in, and adds nothing to its group.
+
+    Raises:
+        KeyError: if a required column is missing.
+        TypeError, ValueError: whatever the three functions raise for a bad row,
+            because one bad row should stop the table rather than vanish from it.
+    """
+    lines = pd.DataFrame(
+        {
+            "country_code": [clean_country_code(c) for c in orders["country_code"]],
+            "fiscal_quarter": [fiscal_quarter(d) for d in orders["order_date"]],
+            "net_revenue": [
+                extended_price(q, p, r)
+                for q, p, r in zip(
+                    orders["quantity"],
+                    orders["unit_price"],
+                    orders["discount_rate"],
+                    strict=True,
+                )
+            ],
+        }
+    )
+
+    gold = lines.groupby(["country_code", "fiscal_quarter"], as_index=False)["net_revenue"].sum()
+    # Each line total is already rounded to cents. We round the sums again
+    # because adding floats can leave noise in the last place: in Python,
+    # 0.1 + 0.2 is 0.30000000000000004.
+    gold["net_revenue"] = gold["net_revenue"].round(2)
+
+    return gold.sort_values(["country_code", "fiscal_quarter"]).reset_index(drop=True)
