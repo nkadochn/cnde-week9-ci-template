@@ -10,8 +10,8 @@ GitHub-hosted runner can grade the pipeline's logic in under a minute:
    later, where it is somebody else's problem.
 
 Your notebooks do the I/O and call these. We split it that way because it is
-what makes the pipeline testable at all, and it is the layout the final project
-requires.
+what makes the pipeline testable at all, and it is the layout to keep when you
+grow a pipeline of your own in this repository.
 """
 
 from __future__ import annotations

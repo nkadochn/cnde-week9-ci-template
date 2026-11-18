@@ -7,10 +7,9 @@ runner checks out your code, installs the pinned dependencies, lints, and runs t
 tests. Open a pull request and you get the same check reporting on the pull request
 before anyone reads the diff.
 
-We use this template twice. In Week 9 you create a repository from it and spend the
-session breaking and extending the pipeline. Then your final-project repository is this
-same template with your own pipeline grown inside it, so the layout below is the layout
-the final project requires.
+In Week 9 you create a repository from this template and spend the session breaking and
+extending the pipeline. The layout below is also a good one to keep when you grow a
+pipeline of your own inside it.
 
 ## What is in here
 
@@ -72,30 +71,25 @@ dates that cross both a calendar year and a fiscal year.
 **CI never reads from the network.** No bucket, no warehouse, no credentials. A test
 suite that downloads its input fails whenever the service it downloads from is down or
 slow, and once a pipeline fails a few times for reasons outside your code, nobody looks
-at it any more. For the final project you write your own small fixtures the same way,
-one per source, and you plant the anomalies you want caught in them. Real trip data
-never enters the repository.
+at it any more. When you test a pipeline of your own, write its small fixtures the same
+way, one per source, and plant the anomalies you want caught in them. Real data never
+enters the repository.
 
-## How the final project extends this
+## Growing your own pipeline in it
 
 Keep the layout and grow into it.
 
-| Here | In the final project |
+| Here | In a pipeline of your own |
 |---|---|
 | `src/transform.py` | your conforming, typing and quality-rule functions, still pure |
 | `tests/test_transform.py` | tests over those functions, one file per module as it grows |
-| `data/fixture_orders.csv` | a small fixture per service, with the anomalies planted |
-| `notebooks/` | the Bronze, Silver and Gold notebooks, importing from `src/` |
+| `data/fixture_orders.csv` | a small fixture per source, with the anomalies planted |
+| `notebooks/` | the notebooks that read and write the data, importing from `src/` |
 | `ci.yml` | the same job, unchanged, running against more code |
 
 Three things separate a repository that has CI from one where CI is doing work: the
 layout above, tests that exercise your own quality rules rather than asserting `True`,
-and a green run on the commit you do hand over.
-
-`repo_evidence.md` in this repository is the form for the evidence you upload to Canvas
-with your final project: your log and the output of your runs, pasted as text. Fill in a
-copy of it after your last push and never commit it; the form says why. What counts, and
-what the CI component is worth, is in the final-project brief on Canvas.
+and a green run on the commit you hand over.
 
 ## Before you write your first line
 
