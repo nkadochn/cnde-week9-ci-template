@@ -17,19 +17,26 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-          # No `cache: pip` here, and that is deliberate. We ran this
-          # pipeline three times: 20 s with an empty cache, 18 s with a
-          # populated one, 16 s with the line gone. Three prebuilt wheels
-          # are dominated by installing, not downloading, so there was
-          # nothing for a cache to save and it cost a few seconds of its
-          # own. Add it back the day requirements.txt grows a package
-          # that compiles from source, and measure it again.
+          # No `cache: pip` here, and that is deliberate. When this template
+          # pinned three packages we ran it three times: 20 s with an empty
+          # cache, 18 s with a populated one, 16 s with the line gone. Add it
+          # back the day requirements.txt grows a package that compiles from
+          # source, and measure it again.
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
       - name: Lint
-        run: ruff check src tests
+        run: ruff check src tests tools
 
+      # coverage runs the same pytest and records which lines and branches
+      # the tests executed. Executed is not the same as tested: mutmut
+      # measures that, and we run it locally because it reruns the suite once
+      # per mutant.
       - name: Test
-        run: pytest -q
+        run: coverage run -m pytest -q
+
+      - name: CRAP gate
+        run: |
+          coverage json -q
+          python tools/crap.py --max 12

@@ -13,7 +13,6 @@ from src.transform import (
     clean_country_code,
     extended_price,
     fiscal_quarter,
-    revenue_by_country_quarter,
 )
 
 
@@ -132,8 +131,8 @@ class TestAgainstTheFixture:
 
     The unit cases above prove each function in isolation. These prove the
     fixture is still the shape the pipeline assumes, which is how we find out
-    that a source file changed under us. The last two pin the Gold table built
-    from the fixture to exact values, worked out line by line from its twenty rows.
+    that a source file changed under us. The exact Gold numbers are not here:
+    they live in tests/test_gold_signoff.py, the file a person owns.
     """
 
     def test_every_country_code_cleans_when_the_fixture_is_read(self, orders):
@@ -165,8 +164,8 @@ class TestAgainstTheFixture:
         )
         assert net < gross
         # This test checks a direction and nothing more, so a wrong amount
-        # that is still below the gross passes it. The two Gold tests at the
-        # end of this class pin exact amounts.
+        # that is still below the gross passes it. The Gold tests in
+        # tests/test_gold_signoff.py pin exact amounts.
 
     def test_two_fiscal_years_are_covered_when_dates_are_bucketed(self, orders):
         quarters = {fiscal_quarter(d.date()) for d in orders["order_date"]}
@@ -178,22 +177,3 @@ class TestAgainstTheFixture:
         # divides by quantity anywhere, we want a row that makes it fail here
         # rather than in production.
         assert (orders["quantity"] == 0).sum() == 1
-
-    def test_gold_has_one_row_per_country_and_quarter_when_the_fixture_is_aggregated(
-        self, orders
-    ):
-        gold = revenue_by_country_quarter(orders)
-        assert list(gold.columns) == ["country_code", "fiscal_quarter", "net_revenue"]
-        assert len(gold) == 16
-        assert gold["country_code"].nunique() == 10
-        assert not gold.duplicated(["country_code", "fiscal_quarter"]).any()
-
-    def test_gold_net_revenue_is_exact_when_the_fixture_is_aggregated(self, orders):
-        gold = revenue_by_country_quarter(orders).set_index(["country_code", "fiscal_quarter"])
-        # The total first, then two cells, so a wrong amount fails here even
-        # if errors elsewhere in the table happen to cancel out in the total.
-        # GB FY25-Q3 is 2 x 999.99, plus 15 x 7.80 less 25 percent.
-        total = round(float(gold["net_revenue"].sum()), 2)
-        assert total == 8989.21
-        assert gold.loc[("US", "FY25-Q1"), "net_revenue"] == 148.55
-        assert gold.loc[("GB", "FY25-Q3"), "net_revenue"] == 2087.73

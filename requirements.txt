@@ -5,3 +5,11 @@
 pandas==3.0.5
 pytest==9.1.1
 ruff==0.16.4
+# coverage measures which lines and branches the tests execute, and radon
+# measures each function's cyclomatic complexity. tools/crap.py combines the two.
+coverage==7.17.5
+radon==6.0.1
+# mutmut changes the code one small edit at a time and reruns the tests. We pin
+# the 2.x line on purpose: mutmut 3 refuses a layout like this one, where the
+# tests import the code as src.transform, and stops before it mutates anything.
+mutmut==2.5.1

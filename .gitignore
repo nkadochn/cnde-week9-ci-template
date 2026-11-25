@@ -22,6 +22,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+.coverage
+coverage.json
+.mutmut-cache
 
 # Environments and editors
 .venv/

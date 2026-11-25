@@ -1,0 +1,16 @@
+# Configuration for two of the tools in requirements.txt. Ruff reads its rules
+# from ruff.toml, and pytest needs no configuration here.
+
+[tool.coverage.run]
+# Branch measurement counts an `if` as covered only when the tests have taken
+# it both ways, which is what the CRAP score in tools/crap.py should see.
+branch = true
+source = ["src"]
+
+[tool.mutmut]
+# We mutate the pipeline's transformation functions and nothing else. The
+# runner stops at the first failing test, because one failure is enough to
+# kill a mutant and the rest of the suite would only cost time.
+paths_to_mutate = "src/transform.py"
+runner = "python -m pytest -x -q -p no:cacheprovider"
+tests_dir = "tests/"
