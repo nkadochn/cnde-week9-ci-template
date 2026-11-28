@@ -26,7 +26,7 @@ tools/crap.py                the CRAP score: complexity and coverage in one numb
 notebooks/                   where your notebooks go
 AGENTS.md                    the rules a coding agent follows in this repository
 pyproject.toml               settings for coverage and mutmut
-requirements.txt             pinned versions, because CI must be reproducible
+requirements.txt             exact versions of the packages we chose
 ruff.toml                    the lint rules, chosen rather than inherited
 ```
 
@@ -50,7 +50,7 @@ that table.
 
 `src/order_metrics.py` is different on purpose. It plays the part of code a coding
 agent wrote from a one-paragraph request, with its own tests, and nobody has read it.
-Every check passes on it. The Week 9 practice asks whether that is enough.
+The Week 9 practice asks how much its tests prove.
 
 All of them are pure: arguments in, value out, no network, no warehouse, no file reads.
 That is the property that lets a runner check them in seconds. You do the reading and
@@ -99,12 +99,14 @@ mutmut results
 on purpose: whitespace around country codes, mixed case, a zero-quantity line, and
 dates that cross both a calendar year and a fiscal year.
 
-**CI never reads from the network.** No bucket, no warehouse, no credentials. A test
-suite that downloads its input fails whenever the service it downloads from is down or
-slow, and once a pipeline fails a few times for reasons outside your code, nobody looks
-at it any more. When you test a pipeline of your own, write its small fixtures the same
-way, one per source, and plant the anomalies you want caught in them. Real data never
-enters the repository.
+**The tests never read data from the network.** No bucket, no warehouse, no
+credentials. The runner does download the pinned packages from PyPI when it installs
+them, and that is the only download in the job. A test suite that downloads its input
+fails whenever the service it downloads from is down or slow, and once a pipeline
+fails a few times for reasons outside your code, nobody looks at it any more. When you
+test a pipeline of your own, write its small fixtures the same way, one per source,
+and plant the anomalies you want caught in them. Real data never enters the
+repository.
 
 ## Growing your own pipeline in it
 

@@ -12,7 +12,10 @@ one scores ``comp**2 + comp``, so complexity is cheap when tests cover it and
 expensive when they do not.
 
 We read complexity from radon and coverage from the ``coverage.json`` that
-``coverage json`` writes. Run it after the tests:
+``coverage json`` writes, so the score inherits coverage's blind spot: a line
+the tests execute counts as covered whether or not any test checks its result,
+and a line marked ``# pragma: no cover`` drops out of the count altogether.
+Run it after the tests:
 
     coverage run -m pytest -q
     coverage json -q
@@ -41,7 +44,7 @@ def main() -> int:
 
     files = json.loads(Path(args.coverage).read_text())["files"]
     rows = []
-    for path in sorted(Path("src").glob("*.py")):
+    for path in sorted(Path("src").rglob("*.py")):
         functions = files.get(path.as_posix(), {}).get("functions", {})
         blocks = cc_visit(path.read_text())
         # A class block lists its methods; we score the methods, not the class.

@@ -21,9 +21,9 @@ from datetime import date
 import pandas as pd
 
 # The fiscal year runs 1 October to 30 September, so October starts a new year.
-# We chose this to match the dim_date logic from the warehousing week. If your
-# project uses a calendar fiscal year, change it here and the tests will tell
-# you everywhere else it mattered.
+# It is the same fiscal year as the Austin court data in the lakehouse week. If
+# your project uses a calendar fiscal year, change it here and the tests will
+# tell you everywhere else it mattered.
 FISCAL_YEAR_START_MONTH = 10
 
 

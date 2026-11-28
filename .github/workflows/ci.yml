@@ -6,22 +6,31 @@ name: ci
 # trigger and a commit you push before opening the PR runs nothing at all.
 on: [push, pull_request]
 
+# The job's token can read the repository and do nothing else. A step that
+# needs more asks for it by name, so a compromised step cannot push code.
+permissions:
+  contents: read
+
 jobs:
   lint-test:
     runs-on: ubuntu-latest
     steps:
+      # Each action is pinned to a full commit SHA, with its version in the
+      # comment. A tag such as v7 can be moved by its publisher, and a commit
+      # SHA cannot, so the code this step runs changes only when we change it.
       - name: Check out the repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: '3.12'
           # No `cache: pip` here, and that is deliberate. When this template
           # pinned three packages we ran it three times: 20 s with an empty
-          # cache, 18 s with a populated one, 16 s with the line gone. Add it
-          # back the day requirements.txt grows a package that compiles from
-          # source, and measure it again.
+          # cache, 18 s with a populated one, 16 s with the line gone. The list
+          # has grown since, and two packages now arrive as source archives
+          # that pip builds on the runner, so measure it again before you add
+          # the line back.
 
       - name: Install dependencies
         run: pip install -r requirements.txt

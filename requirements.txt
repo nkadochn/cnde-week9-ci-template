@@ -1,5 +1,8 @@
-# We pin exactly. If a CI run installs a different version than it did
-# yesterday, it cannot tell you whether your code broke or your dependency did.
+# We pin every package we chose, to an exact version. If a CI run installs a
+# different version of one of them than it did yesterday, it cannot tell you
+# whether your code broke or your dependency did. The packages these pull in
+# (numpy for pandas, for example) are not pinned here, so pip can still resolve
+# a newer one of those; a lock file would pin them too.
 # pandas 3 needs Python 3.11 or newer, and that is what pins the runner version
 # in .github/workflows/ci.yml.
 pandas==3.0.5
@@ -13,3 +16,11 @@ radon==6.0.1
 # the 2.x line on purpose: mutmut 3 refuses a layout like this one, where the
 # tests import the code as src.transform, and stops before it mutates anything.
 mutmut==2.5.1
+# mutmut 2.5.1 asks for these five with no upper bound, so a new release of any
+# of them could reach this old mutmut untested. We pin the versions that
+# resolved when we last ran mutmut here.
+click==8.5.1
+glob2==0.7
+parso==0.8.7
+pony==0.7.20
+toml==0.10.2
